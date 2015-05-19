@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Sound Manager JS</title>
+		<script type="text/javascript" src="js/AudioGraph.js"></script>
+		<script type="text/javascript" src="js/SoundManager.js"></script>
+	</head>
+	<body>
+		
+	</body>
+</html>
+<script type="text/javascript">
+var a = new AudioGraph(true),
+	b = new AudioGraph(true),
+	c = new AudioGraph(true),
+	d = new AudioGraph(true),
+	e = new AudioGraph(true),
+	f = new AudioGraph(true);
+
+var promises = [
+				a.addSource(a.loadSoundFromFile('/sounds/sarabande.mp3')),
+				b.addSource(b.loadSoundFromFile('/sounds/sarabande.mp3')),
+				c.addSource(c.loadSoundFromFile('/sounds/sarabande.mp3')),
+				d.addSource(d.loadSoundFromFile('/sounds/sarabande.mp3')),
+				e.addSource(e.loadSoundFromFile('/sounds/sarabande.mp3')),
+				f.addSource(f.loadSoundFromFile('/sounds/sarabande.mp3'))
+			];
+
+
+var s = new SoundManager()
+s.preload(promises).then(function(output) {
+	for (var i=0; i<output.length; i++) {
+		output[i].delay(undefined, {delayTime : i*0.2}).connectToOutput("delay").play();
+	}
+});
+</script>
