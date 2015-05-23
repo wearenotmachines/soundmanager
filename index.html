@@ -11,27 +11,41 @@
 	</body>
 </html>
 <script type="text/javascript">
-var a = new AudioGraph(true),
-	b = new AudioGraph(true),
-	c = new AudioGraph(true),
-	d = new AudioGraph(true),
-	e = new AudioGraph(true),
+var a = new AudioGraph(true);
+	// b = new AudioGraph(true),
+	// c = new AudioGraph(true),
+	// d = new AudioGraph(true),
+	// e = new AudioGraph(true),
 	f = new AudioGraph(true);
 
 var promises = [
-				a.addSource(a.loadSoundFromFile('/example/sarabande.mp3')),
-				b.addSource(b.loadSoundFromFile('/example/sarabande.mp3')),
-				c.addSource(c.loadSoundFromFile('/example/sarabande.mp3')),
-				d.addSource(d.loadSoundFromFile('/example/sarabande.mp3')),
-				e.addSource(e.loadSoundFromFile('/example/sarabande.mp3')),
-				f.addSource(f.loadSoundFromFile('/example/sarabande.mp3'))
+				// a.addSource(a.loadSoundFromFile('/example/sarabande.mp3')),
+				// b.addSource(b.loadSoundFromFile('/example/sarabande.mp3')),
+				// c.addSource(c.loadSoundFromFile('/example/sarabande.mp3')),
+				// d.addSource(d.loadSoundFromFile('/example/sarabande.mp3')),
+				// e.addSource(e.loadSoundFromFile('/example/sarabande.mp3')),
+				f.addSource(f.loadSoundFromFile('/sounds/hideandseek.mp3'))
 			];
 
 
 var s = new SoundManager()
 s.preload(promises).then(function(output) {
-	for (var i=0; i<output.length; i++) {
-		output[i].delay(undefined, {delayTime : i*0.2}).connectToOutput("delay").play();
-	}
+	var sample = output[0];
+	// for (var i=0; i<output.length; i++) {
+		// output[i].pan("source", {label : "pan", orientation : {x:100, y:2000, z:300}, velocity : {x:1000, y : 10, z : 20}}).connectToOutput();
+		// sample.connectToOutput();
+		sample.filter("source", "bandpass", {frequency : 440, Q : 20}).gain("bandpass", {gain : 10}).connectToOutput();
+		sample.delay("gain", {label : "d", delayTime : 0.4}).connectToOutput();
+		sample.delay("gain", {label : "w", delayTime : 0.6}).connectToOutput();
+
+		// output[i].filter("source", "highpass", {frequency : 800, Q : 30}).pan("highpass", {label : "pan2", orientation : {x:10,y:0,z:0}, position : {x:-50, y:0, z:-20}}).delay("pan2", {label : "delay2", delayTime : 0.2}).gain("delay2", {gain : 20}).connectToOutput()
+		// output[i].delay("source", {delayTime : 0}).connectToOutput();
+		window.iterator = 1;
+		setInterval(function() {
+			sample.sendParamChange("bandpass", {frequency : {value : (Math.sin(window.iterator)*220)+440}}, "instant");
+			window.iterator += 1;
+		}, 100);
+		sample.play();
+	// }
 });
 </script>
